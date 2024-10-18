@@ -9,40 +9,43 @@
 // Execute `rustlings hint iterators3` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
-#[derive(Debug, PartialEq, Eq)]
-pub enum DivisionError {
-    NotDivisible(NotDivisibleError),
-    DivideByZero,
+
+pub fn capitalize_first(input: &str) -> String {
+    let mut c = input.chars();
+    match c.next() {
+        None => String::new(),
+        Some(first) => {
+            let mut result = String::new();
+            result.push(first.to_uppercase().next().unwrap());
+            result.push_str(c.as_str()); // result.extend(c)
+            result
+        }
+    }
 }
 
-#[derive(Debug, PartialEq, Eq)]
-pub struct NotDivisibleError {
-    dividend: i32,
-    divisor: i32,
+// Step 2.
+// Apply the `capitalize_first` function to a slice of string slices.
+// Return a vector of strings.
+// ["hello", "world"] -> ["Hello", "World"]
+pub fn capitalize_words_vector(words: &[&str]) -> Vec<String> {
+    let mut result = Vec::new();
+    for word in words {
+        result.push(capitalize_first(word));
+    }
+    result
 }
 
-// Calculate `a` divided by `b` if `a` is evenly divisible by `b`.
-// Otherwise, return a suitable error.
-pub fn divide(a: i32, b: i32) -> Result<i32, DivisionError> {
-    todo!();
-}
-
-// Complete the function and return a value of the correct type so the test
-// passes.
-// Desired output: Ok([1, 11, 1426, 3])
-fn result_with_list() -> () {
-    let numbers = vec![27, 297, 38502, 81];
-    let division_results = numbers.into_iter().map(|n| divide(n, 27));
-}
-
-// Complete the function and return a value of the correct type so the test
-// passes.
-// Desired output: [Ok(1), Ok(11), Ok(1426), Ok(3)]
-fn list_of_results() -> () {
-    let numbers = vec![27, 297, 38502, 81];
-    let division_results = numbers.into_iter().map(|n| divide(n, 27));
+// Step 3.
+// Apply the `capitalize_first` function again to a slice of string slices.
+// Return a single string.
+// ["hello", " ", "world"] -> "Hello World"
+pub fn capitalize_words_string(words: &[&str]) -> String {
+    let mut result = String::new();
+    for word in words {
+        result += &capitalize_first(word);
+    }
+    result
 }
 
 #[cfg(test)]
@@ -51,40 +54,23 @@ mod tests {
 
     #[test]
     fn test_success() {
-        assert_eq!(divide(81, 9), Ok(9));
+        assert_eq!(capitalize_first("hello"), "Hello");
     }
 
     #[test]
-    fn test_not_divisible() {
-        assert_eq!(
-            divide(81, 6),
-            Err(DivisionError::NotDivisible(NotDivisibleError {
-                dividend: 81,
-                divisor: 6
-            }))
-        );
+    fn test_empty() {
+        assert_eq!(capitalize_first(""), "");
     }
 
     #[test]
-    fn test_divide_by_0() {
-        assert_eq!(divide(81, 0), Err(DivisionError::DivideByZero));
+    fn test_iterate_string_vec() {
+        let words = vec!["hello", "world"];
+        assert_eq!(capitalize_words_vector(&words), ["Hello", "World"]);
     }
 
     #[test]
-    fn test_divide_0_by_something() {
-        assert_eq!(divide(0, 81), Ok(0));
-    }
-
-    #[test]
-    fn test_result_with_list() {
-        assert_eq!(format!("{:?}", result_with_list()), "Ok([1, 11, 1426, 3])");
-    }
-
-    #[test]
-    fn test_list_of_results() {
-        assert_eq!(
-            format!("{:?}", list_of_results()),
-            "[Ok(1), Ok(11), Ok(1426), Ok(3)]"
-        );
+    fn test_iterate_into_string() {
+        let words = vec!["hello", " ", "world"];
+        assert_eq!(capitalize_words_string(&words), "Hello World");
     }
 }
